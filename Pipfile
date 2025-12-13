@@ -26,6 +26,9 @@ backoff = "==2.2.1"
 redis = "==5.0.0"
 colorama = "*"
 langchain-community = "==0.0.19"
+langchain-google-genai = "*"
+"google.generativeai" = "*"
+langchain-pinecone = "*"
 
 [dev-packages]
 
