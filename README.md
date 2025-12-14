@@ -24,16 +24,8 @@ Commands to start each are listed below. If you need to stop them, select the te
 
 ### To run the Python server
 
-Open a new terminal window and create a new virtual environment:
-
 ```
-pipenv shell
-```
-
-Then:
-
-```
-inv dev
+uv inv dev
 ```
 
 ### To run the worker
@@ -41,13 +33,7 @@ inv dev
 Open a new terminal window and create a new virtual environment:
 
 ```
-pipenv shell
-```
-
-Then:
-
-```
-inv devworker
+uv inv devworker
 ```
 
 ### To run Redis
@@ -61,11 +47,5 @@ redis-server
 Open a new terminal window and create a new virtual environment:
 
 ```
-pipenv shell
-```
-
-Then:
-
-```
-flask --app app.web init-db
+uv run flask --app app.web init-db
 ```
