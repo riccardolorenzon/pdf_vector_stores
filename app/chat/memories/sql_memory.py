@@ -27,7 +27,7 @@ class SQLChatMessageHistory(BaseChatMessageHistory, BaseModel):
         # Not implemented
         pass   
 
-def build_sql_memory(conversation_id: str) -> ConversationBufferMemory:
+def build_sql_memory(chat_args: object) -> ConversationBufferMemory:
     """
     Build a SQL-based conversation memory for the given conversation ID.
 
@@ -35,9 +35,11 @@ def build_sql_memory(conversation_id: str) -> ConversationBufferMemory:
 
     :return: An instance of ConversationBufferMemory using SQLChatMessageHistory.
     """
-    message_history = SQLChatMessageHistory(conversation_id=conversation_id)
+    message_history = SQLChatMessageHistory(conversation_id=chat_args.conversation_id)
     memory = ConversationBufferMemory(
         chat_memory=message_history,
-        return_messages=True
+        return_messages=True,
+        memory_key="chat_history",
+        output_key="answer",
     )
     return memory

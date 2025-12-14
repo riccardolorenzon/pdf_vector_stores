@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 class Config:
     SESSION_PERMANENT = True
     SECRET_KEY = os.environ["SECRET_KEY"]

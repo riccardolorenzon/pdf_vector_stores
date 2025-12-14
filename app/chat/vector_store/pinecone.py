@@ -12,4 +12,5 @@ vector_store = PineconeVectorStore.from_existing_index(
 
 def build_retriever(chat_args: ChatArgs):
     search_kwargs = {"filter": {"pdf_id": chat_args.pdf_id}} if chat_args.pdf_id else {}
+    print("Building retriever with search_kwargs:", search_kwargs)
     return vector_store.as_retriever(search_type="similarity", search_kwargs=search_kwargs)
