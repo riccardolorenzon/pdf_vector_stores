@@ -13,6 +13,6 @@ def build_llm(chat_args):
     """
 
     return ChatGoogleGenerativeAI(
-        model="models/gemini-2.5-pro",
+        model="models/gemini-2.5-flash-lite",
         convert_system_message_to_human=True,
     )
