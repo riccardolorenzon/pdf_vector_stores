@@ -1,3 +1,29 @@
+import random
+from app.chat.redis import client
+
+def random_component_by_score(component_type: str, component_map: dict) -> str:
+    # make sure component_type is one of 'llm', 'retriever', 'memory'
+    assert component_type in ['llm', 'retriever', 'memory'], "Invalid component type"
+    values = client.hgetall(f"{component_type}_score_values")
+    counts = client.hgetall(f"{component_type}_score_counts")
+    print(values, counts)
+    names = component_map.keys()
+    avg_scores = {}
+    for name in names:
+        score = int(values.get(name, 1))
+        count = int(counts.get(name, 1))
+        avg = score / count
+        avg_scores[name] = max(avg, 0.1)
+
+    print(avg_scores)
+    sum_scores = sum(avg_scores.values())
+    random_value = random.uniform(0, sum_scores)
+    cumulative = 0
+    for name, score in avg_scores.items():
+        cumulative += score
+        if random_value <= cumulative:
+            return name
+
 def score_conversation(
     conversation_id: str, score: float, llm: str, retriever: str, memory: str
 ) -> None:
@@ -17,8 +43,15 @@ def score_conversation(
     score_conversation('abc123', 0.75, 'llm_info', 'retriever_info', 'memory_info')
     """
 
-    pass
+    score = min(max(score, 0), 1)
+    client.hincrby("llm_score_values", llm, score)
+    client.hincrby("llm_score_counts", llm, 1)
 
+    client.hincrby("retriever_score_values", llm, score)
+    client.hincrby("retriever_score_counts", llm, 1)
+
+    client.hincrby("memory_score_values", llm, score)
+    client.hincrby("memory_score_counts", llm, 1)
 
 def get_scores():
     """
