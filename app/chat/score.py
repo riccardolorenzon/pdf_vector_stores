@@ -47,11 +47,11 @@ def score_conversation(
     client.hincrby("llm_score_values", llm, score)
     client.hincrby("llm_score_counts", llm, 1)
 
-    client.hincrby("retriever_score_values", llm, score)
-    client.hincrby("retriever_score_counts", llm, 1)
+    client.hincrby("retriever_score_values", retriever, score)
+    client.hincrby("retriever_score_counts", retriever, 1)
 
-    client.hincrby("memory_score_values", llm, score)
-    client.hincrby("memory_score_counts", llm, 1)
+    client.hincrby("memory_score_values", memory, score)
+    client.hincrby("memory_score_counts", memory, 1)
 
 def get_scores():
     """
@@ -76,4 +76,20 @@ def get_scores():
         }
     """
 
-    pass
+    aggregate = {
+        "retriever": {},
+        "llm": {},
+        "memory": {}
+    }
+
+    for component_type in aggregate.keys():
+        values = client.hgetall(f"{component_type}_score_values")
+        counts = client.hgetall(f"{component_type}_score_counts")
+        for name in values.keys():
+            total_score = int(values.get(name, 0))
+            count = int(counts.get(name, 1))
+            avg_score = total_score / count
+            if name not in aggregate[component_type]:
+                aggregate[component_type][name] = []
+            aggregate[component_type][name].append(avg_score)
+    return aggregate
