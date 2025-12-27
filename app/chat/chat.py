@@ -10,6 +10,8 @@ from app.web.api import (
     get_conversation_components
 )
 from app.chat.score import random_component_by_score
+from app.chat.tracing.langfuse import langfuse
+from langfuse.langchain import CallbackHandler
 
 def select_component(
     component_type, component_map, chat_args
@@ -65,6 +67,19 @@ def build_chat(chat_args: ChatArgs):
         convert_system_message_to_human=True,
         streaming=False,
     )
+    
+    observation = langfuse.start_observation(
+        name=chat_args.conversation_id,
+        metadata=chat_args.metadata,
+        as_type="chain"
+    )
+    
+    handler = CallbackHandler(
+        trace_context={
+            "trace_id": observation.trace_id,
+            "observation_id": observation.id
+        }
+    )
 
     return StreamingConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -72,4 +87,5 @@ def build_chat(chat_args: ChatArgs):
         retriever=retriever,
         memory=memory,
         get_chat_history=lambda h: h,
+        callbacks=[handler], 
     )
