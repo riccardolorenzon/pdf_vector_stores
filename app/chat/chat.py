@@ -68,18 +68,7 @@ def build_chat(chat_args: ChatArgs):
         streaming=False,
     )
     
-    observation = langfuse.start_observation(
-        name=chat_args.conversation_id,
-        metadata=chat_args.metadata,
-        as_type="chain"
-    )
     
-    handler = CallbackHandler(
-        trace_context={
-            "trace_id": observation.trace_id,
-            "observation_id": observation.id
-        }
-    )
 
     return StreamingConversationalRetrievalChain.from_llm(
         llm=llm,
@@ -87,5 +76,5 @@ def build_chat(chat_args: ChatArgs):
         retriever=retriever,
         memory=memory,
         get_chat_history=lambda h: h,
-        callbacks=[handler], 
+        metadata=chat_args.metadata.__dict__
     )
