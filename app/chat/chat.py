@@ -10,8 +10,7 @@ from app.web.api import (
     get_conversation_components
 )
 from app.chat.score import random_component_by_score
-from app.chat.tracing.langfuse import langfuse
-from langfuse.langchain import CallbackHandler
+
 
 def select_component(
     component_type, component_map, chat_args

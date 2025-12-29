@@ -3,7 +3,6 @@ from langfuse.langchain import CallbackHandler
 
 class TracableChain: 
     def __call__(self, *args, **kwargs):
-        print(self.metadata)
         observation = langfuse.start_observation(
             name=self.metadata["conversation_id"],
             metadata=self.metadata,
